@@ -27,14 +27,15 @@ func NewBookStore(filename string) (BookStore, error) {
 }
 
 type bookStoreClass struct {
-	books []*Book
+	books      []*Book
+	LastBookID int
 }
 
 func (bsc *bookStoreClass) ListBooks() ([]*Book, error) {
 	return bsc.books,nil
 }
 
-func (bsc *bookStoreClass) DeleteBook(id string) error {
+func (bsc *bookStoreClass) DeleteBook(id int) error {
 	for i, v := range bsc.books{
 		if(v.ID == id){
 			bsc.books = append(bsc.books[:i],bsc.books[i+1:]...)
@@ -43,7 +44,7 @@ func (bsc *bookStoreClass) DeleteBook(id string) error {
 	return errors.New("Not found")
 }
 
-func (bsc *bookStoreClass) UpdateBook(id string, book *Book) (*Book, error) {
+func (bsc *bookStoreClass) UpdateBook(id int, book *Book) (*Book, error) {
 	for _,v := range bsc.books{
 		if(v.ID == id){
 			v = book;
@@ -53,7 +54,7 @@ func (bsc *bookStoreClass) UpdateBook(id string, book *Book) (*Book, error) {
 	return nil, errors.New("Not found")
 }
 
-func (bsc *bookStoreClass) GetBook(id string) (*Book, error) {
+func (bsc *bookStoreClass) GetBook(id int) (*Book, error) {
 	for _, v := range bsc.books {
 		if v.ID == id {
 			return v, nil
@@ -63,6 +64,8 @@ func (bsc *bookStoreClass) GetBook(id string) (*Book, error) {
 }
 
 func (bsc *bookStoreClass) Create(book *Book) (*Book, error) {
+	book.ID = bsc.LastBookID
+	bsc.LastBookID++
 	bsc.books = append(bsc.books, book)
 	return book, nil
 }
